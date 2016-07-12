@@ -79,3 +79,12 @@ void SushiSprite::setDisplayMode(DisplayMode mode)
     }
     setDisplayFrame(frame);
 }
+
+void SushiSprite::getRect(Rect &rect)
+{
+    //    寿司の位置
+    rect.origin.x = this->getPositionX() - this->getContentSize().width/2;
+    rect.origin.y = this->getPositionY() - this->getContentSize().height/2;
+    //    サイズ
+    rect.size = this->getContentSize();
+}
