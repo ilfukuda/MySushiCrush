@@ -22,6 +22,7 @@ public:
 private:
     SpriteBatchNode *spriteSheet;
     SushiSprite **m_matrix;// 2D array which store (SushiSprite *).
+    std::vector<SushiSprite**> sushiVector;
     int m_width;
     int m_height;
     // for rapid count position

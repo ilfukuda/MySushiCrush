@@ -1,5 +1,6 @@
 #include "PlayLayer.h"
 #include "SushiSprite.h"
+#include <cpplinq.hpp>
 
 #define MATRIX_WIDTH (7)
 #define MATRIX_HEIGHT (9)
@@ -68,6 +69,10 @@ bool PlayLayer::init()
     m_matrix = (SushiSprite **)malloc(arraySize);
     memset((void*)m_matrix, 0, arraySize);
     
+    for (int i=0; i<m_width * m_height; ++i) {
+        sushiVector.push_back(&m_matrix[i]);
+    } 
+    
     initMatrix();
     scheduleUpdate();
     
@@ -81,22 +86,17 @@ bool PlayLayer::init()
 
 SushiSprite *PlayLayer::sushiOfPoint(Point *point)
 {
-    SushiSprite *sushi = NULL;
     Rect rect = Rect(0, 0, 0, 0);
     
-    for (int i = 0; i < m_height * m_width; i++) {
-        sushi = m_matrix[i];
-        if (sushi) {
-            rect.origin.x = sushi->getPositionX() - (sushi->getContentSize().width / 2);
-            rect.origin.y = sushi->getPositionY() - (sushi->getContentSize().height / 2);
-            rect.size = sushi->getContentSize();
-            if (rect.containsPoint(*point)) {
-                return sushi;
-            }
-        }
-    }
+    auto result = cpplinq::from(sushiVector)
+    >> cpplinq::where   ([](SushiSprite** s){return (*s) != NULL; } )
+    >> cpplinq::select([](SushiSprite** s){return *s; })
+    >> cpplinq::first_or_default([&](SushiSprite* s){
+        s->getRect( rect );
+        return rect.containsPoint(*point);
+    } );
     
-    return NULL;
+    return result;
 }
 
 bool PlayLayer::onTouchBegan(Touch *touch, Event *unused)

@@ -18,6 +18,8 @@ public:
 	static SushiSprite *create(int row, int col);
     static float getContentWidth();
     
+    void getRect( Rect& );
+    
     CC_SYNTHESIZE(int, m_row, Row);
     CC_SYNTHESIZE(int, m_col, Col);
     CC_SYNTHESIZE(int, m_imgIndex, ImgIndex);
